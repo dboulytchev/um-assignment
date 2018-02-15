@@ -4,7 +4,7 @@
 
 #include "file_array.h"
 
-platter file_array_get(array_base_t* base, platter idx) {
+platter file_array_get(struct array_base* base, platter idx) {
   file_array_t* self = (file_array_t*) base;
   if (fseek(self->filp, idx, SEEK_SET) != 0) {
     fprintf(stderr, "Error accessing file");
@@ -28,5 +28,6 @@ file_array_t* create_file_array(char* filename) {
     },
     .filp = fopen(filename, "r"),
   };
+  init_list_head(&res->base.lnode);
   return res;
 }

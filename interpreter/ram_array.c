@@ -4,7 +4,7 @@
 
 #include "ram_array.h"
 
-platter ram_array_get(array_base_t* base, platter idx) {
+platter ram_array_get(struct array_base* base, platter idx) {
   ram_array_t* self = (ram_array_t*) base;
   if (idx > self->size) {
     fprintf(stderr, "Index %d is greater than the size of the array: %d", idx, self->size);
@@ -22,5 +22,6 @@ ram_array_t* create_ram_array(platter size) {
     .size = size,
     .data = calloc(size, sizeof(platter)),
   };
+  init_list_head(&res->base.lnode);
   return res;
 }
