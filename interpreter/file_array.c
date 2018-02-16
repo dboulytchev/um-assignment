@@ -7,7 +7,7 @@
 static array_base_t* file_array_clone(array_base_t* base, platter clone_id) {
   (void) base;
   (void) clone_id;
-  fprintf(stderr, "Clonning of file_array is not supported");
+  fprintf(stderr, "Clonning of file_array is not supported\n");
   exit(63);
 }
 
@@ -18,9 +18,9 @@ static struct array_base_vtable file_array_vtable = {
   .clone = file_array_clone,
 };
 
-static void fseek_or_fail(file_array_t* self, platter position) {
-  if (fseek(self->filp, position, SEEK_SET) != 0) {
-    fprintf(stderr, "Error accessing file");
+static void set_idx_or_fail(file_array_t* self, platter idx) {
+  if (fseek(self->filp, idx * sizeof(platter), SEEK_SET) != 0) {
+    fprintf(stderr, "Error accessing file\n");
     exit(6);
   }
 }
@@ -39,11 +39,11 @@ file_array_t* create_file_array(const char* filename, platter id) {
 }
 
 platter file_array_get(file_array_t* self, platter idx) {
-  fseek_or_fail(self, idx);
+  set_idx_or_fail(self, idx);
 
   platter ret;
-  if (fread(&ret, sizeof(ret), 1, self->filp) != sizeof(ret)) {
-    fprintf(stderr, "Error reading from file");
+  if (fread(&ret, sizeof(ret), 1, self->filp) != 1) {
+    fprintf(stderr, "Error reading from file\n");
     exit(7);
   }
 
@@ -51,10 +51,10 @@ platter file_array_get(file_array_t* self, platter idx) {
 }
 
 void file_array_set(file_array_t* self, platter idx, platter value) {
-  fseek_or_fail(self, idx);
+  set_idx_or_fail(self, idx);
 
   if (fwrite(&value, sizeof(value), 1, self->filp) != sizeof(value)) {
-    fprintf(stderr, "Error writing to file");
+    fprintf(stderr, "Error writing to file\n");
     exit(9);
   }
 }

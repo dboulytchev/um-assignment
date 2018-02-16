@@ -14,7 +14,7 @@ static struct array_base_vtable ram_array_vtable = {
 
 void check_idx(ram_array_t* self, platter idx) {
   if (idx > self->size) {
-    fprintf(stderr, "Index %d is greater than the size of the array: %d", idx, self->size);
+    fprintf(stderr, "Index %d is greater than the size of the array: %d\n", idx, self->size);
     exit(5);
   }
 }
@@ -40,7 +40,7 @@ platter ram_array_get(ram_array_t* self, platter idx) {
 
 void ram_array_set(ram_array_t* self, platter idx, platter value) {
   if (idx > self->size) {
-    fprintf(stderr, "Index %d is greater than the size of the array: %d", idx, self->size);
+    fprintf(stderr, "Index %d is greater than the size of the array: %d\n", idx, self->size);
     exit(4);
   }
   self->data[idx] = value;
