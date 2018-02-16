@@ -10,8 +10,6 @@ typedef struct ram_array {
   platter* data;
 } ram_array_t;
 
-platter ram_array_get(struct array_base* base, platter idx);
-
-ram_array_t* create_ram_array(platter size);
+ram_array_t* create_ram_array(platter size, platter id);
 
 #endif // _RAM_ARRAY_H_

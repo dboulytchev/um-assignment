@@ -2,14 +2,16 @@
 #ifndef _LIST_H_
 #define _LIST_H_
 
+#include "base_utils.h"
+
 struct list_head {
-  struct list_head* next;
   struct list_head* prev;
+  struct list_head* next;
 };
 
 static inline void init_list_head(struct list_head* list) {
-  list->next = list;
   list->prev = list;
+  list->next = list;
 }
 
 static inline void list_add(struct list_head* new, struct list_head* head) {
@@ -32,5 +34,8 @@ static inline void list_del(struct list_head* entry) {
 
 #define list_for_each(pos, head) \
   for (pos = (head)->next; pos != (head); pos = pos->next)
+
+#define LIST_HEAD_INITIALIZER(name) \
+  { .prev = &(name), .next = &(name) }
 
 #endif // _LIST_H_

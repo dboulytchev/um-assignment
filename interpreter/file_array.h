@@ -11,8 +11,6 @@ typedef struct file_array {
   FILE* filp;
 } file_array_t;
 
-platter file_array_get(struct array_base* base, platter idx);
-
-file_array_t* create_file_array(char* file_path);
+file_array_t* create_file_array(const char* file_path, platter id);
 
 #endif // _FILE_ARRAY_H_

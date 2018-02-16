@@ -7,6 +7,8 @@
 
 struct array_base {
   platter (*get)(struct array_base* self, platter idx);
+  void (*set)(struct array_base* self, platter idx, platter value);
+  platter id;
   struct list_head lnode;
 };
 

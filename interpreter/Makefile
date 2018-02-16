@@ -1,6 +1,6 @@
 
 CC := gcc
-CFLAGS := -Wall -Wextra -Wpedantic -Werror -Wfatal-errors
+CFLAGS := -Wall -Wextra -Wpedantic
 
 default: all
 
