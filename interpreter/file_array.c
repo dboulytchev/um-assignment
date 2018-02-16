@@ -4,6 +4,12 @@
 
 #include "file_array.h"
 
+static struct array_base_vtable file_array_vtable = {
+  .get = file_array_get,
+  .set = file_array_set,
+  .destroy = destroy_file_array,
+};
+
 static void fseek_or_fail(file_array_t* self, platter position) {
   if (fseek(self->filp, position, SEEK_SET) != 0) {
     fprintf(stderr, "Error accessing file");
@@ -11,7 +17,20 @@ static void fseek_or_fail(file_array_t* self, platter position) {
   }
 }
 
-static platter file_array_get(struct array_base* base, platter idx) {
+file_array_t* create_file_array(const char* filename, platter id) {
+  file_array_t* res = malloc(sizeof(file_array_t));
+  *res = (file_array_t) {
+    .base = {
+      .vtable = &file_array_vtable,
+      .id = id,
+      .lnode = LIST_HEAD_INITIALIZER(res->base.lnode),
+    },
+    .filp = fopen(filename, "rw"),
+  };
+  return res;
+}
+
+platter file_array_get(struct array_base* base, platter idx) {
   file_array_t* self = (file_array_t*) base;
   fseek_or_fail(self, idx);
 
@@ -24,7 +43,7 @@ static platter file_array_get(struct array_base* base, platter idx) {
   return ret;
 }
 
-static void file_array_set(struct array_base* base, platter idx, platter value) {
+void file_array_set(struct array_base* base, platter idx, platter value) {
   file_array_t* self = (file_array_t*) base;
   fseek_or_fail(self, idx);
 
@@ -34,16 +53,10 @@ static void file_array_set(struct array_base* base, platter idx, platter value) 
   }
 }
 
-file_array_t* create_file_array(const char* filename, platter id) {
-  file_array_t* res = malloc(sizeof(file_array_t));
-  *res = (file_array_t) {
-    .base = {
-      .get = file_array_get,
-      .set = file_array_set,
-      .id = id,
-      .lnode = LIST_HEAD_INITIALIZER(res->base.lnode),
-    },
-    .filp = fopen(filename, "rw"),
-  };
-  return res;
+void destroy_file_array(struct array_base* base) {
+  file_array_t* self = (file_array_t*) base;
+  if (fclose(self->filp)) {
+    fprintf(stderr, "Error closing file");
+    exit(15);
+  }
 }

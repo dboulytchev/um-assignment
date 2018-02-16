@@ -47,12 +47,12 @@ void conditional_move(um_state_t* state, platter cmd) {
 
 void array_index(um_state_t* state, platter cmd) {
   struct array_base* array = get_array(state, state->regs[reg_b(cmd)]);
-  state->regs[reg_a(cmd)] = array->get(array, state->regs[reg_c(cmd)]);
+  state->regs[reg_a(cmd)] = array_get(array, state->regs[reg_c(cmd)]);
 }
 
 void array_amendment(um_state_t* state, platter cmd) {
   struct array_base* array = get_array(state, state->regs[reg_a(cmd)]);
-  array->set(array, state->regs[reg_b(cmd)], state->regs[reg_c(cmd)]);
+  array_set(array, state->regs[reg_b(cmd)], state->regs[reg_c(cmd)]);
 }
 
 void addition(um_state_t* state, platter cmd) {
