@@ -14,11 +14,15 @@ static inline void init_list_head(struct list_head* list) {
   list->next = list;
 }
 
-static inline void list_add(struct list_head* new, struct list_head* head) {
+static inline void list_add_after(struct list_head* new, struct list_head* head) {
   new->prev = head;
   new->next = head->next;
   new->prev->next = new;
   new->next->prev = new;
+}
+
+static inline void list_append(struct list_head* new, struct list_head* head) {
+  list_add_after(new, head->prev);
 }
 
 static inline void list_del(struct list_head* entry) {

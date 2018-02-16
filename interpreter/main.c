@@ -55,6 +55,40 @@ void array_amendment(um_state_t* state, platter cmd) {
   array->set(array, state->regs[reg_b(cmd)], state->regs[reg_c(cmd)]);
 }
 
+void addition(um_state_t* state, platter cmd) {
+  state->regs[reg_a(cmd)] = state->regs[reg_b(cmd)] + state->regs[reg_c(cmd)];
+}
+
+void multiplication(um_state_t* state, platter cmd) {
+  state->regs[reg_a(cmd)] = state->regs[reg_b(cmd)] * state->regs[reg_c(cmd)];
+}
+
+void division(um_state_t* state, platter cmd) {
+  state->regs[reg_a(cmd)] = state->regs[reg_b(cmd)] / state->regs[reg_c(cmd)];
+}
+
+void not_and(um_state_t* state, platter cmd) {
+  state->regs[reg_a(cmd)] = ~(state->regs[reg_b(cmd)] & state->regs[reg_c(cmd)]);
+}
+
+void halt(um_state_t* state, platter cmd) {
+  (void)state;
+  (void)cmd;
+  fprintf(stderr, "The machine is halted");
+  exit(0);
+}
+
+void allocation(um_state_t* state, platter cmd) {
+  ram_array_t* array = create_ram_array(state->regs[reg_c(cmd)], state->regs[reg_b(cmd)]);
+  list_append(&array->base.lnode, &state->arrays);
+}
+
+void abandonment(um_state_t* state, platter cmd) {
+  struct array_base* array = get_array(state, state->regs[reg_c(cmd)]);
+  list_del(&array->lnode);
+  // TODO: call destructor
+}
+
 void init_um_state(um_state_t* state, const char* filename) {
   *state = (um_state_t) {
     .arrays = LIST_HEAD_INITIALIZER(state->arrays),
@@ -64,7 +98,7 @@ void init_um_state(um_state_t* state, const char* filename) {
     },
   };
   file_array_t* zero_array = create_file_array(filename, 0);
-  list_add(&zero_array->base.lnode, &state->arrays);
+  list_append(&zero_array->base.lnode, &state->arrays);
 }
 
 int main() {
