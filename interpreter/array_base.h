@@ -27,4 +27,8 @@ inline static void array_set(struct array_base* array, platter idx, platter valu
   array->vtable->set(array, idx, value);
 }
 
+inline static void destroy_array(struct array_base* array) {
+  array->vtable->destroy(array);
+}
+
 #endif // _ARRAY_BASE_H_

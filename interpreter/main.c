@@ -84,9 +84,14 @@ void allocation(um_state_t* state, platter cmd) {
 }
 
 void abandonment(um_state_t* state, platter cmd) {
-  struct array_base* array = get_array(state, state->regs[reg_c(cmd)]);
+  platter array_id = state->regs[reg_c(cmd)];
+  if (array_id == 0) {
+    fprintf(stderr, "Trying to destroy zero array");
+    exit(123);
+  }
+  struct array_base* array = get_array(state, array_id);
   list_del(&array->lnode);
-  // TODO: call destructor
+  destroy_array(array);
 }
 
 void init_um_state(um_state_t* state, const char* filename) {
