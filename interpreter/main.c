@@ -90,9 +90,38 @@ void abandonment(um_state_t* state, platter cmd) {
     exit(123);
   }
   struct array_base* array = get_array(state, array_id);
-  list_del(&array->lnode);
   destroy_array(array);
 }
+
+void output(um_state_t* state, platter cmd) {
+  platter value = state->regs[reg_c(cmd)];
+  if (value > 255) {
+    fprintf(stderr, "Trying to output too large number: %d", value);
+    exit(77);
+  }
+  printf("%c", (char)value);
+}
+
+void input(um_state_t* state, platter cmd) {
+  char ch;
+  state->regs[reg_c(cmd)] = (scanf("%c", &ch) == EOF) ? -1 : ch;
+}
+
+void load_program(um_state_t* state, platter cmd) {
+  platter array_id = state->regs[reg_c(cmd)];
+  if (array_id == 0) {
+    return;
+  }
+  destroy_array(get_array(state, 0));
+  struct array_base* array = get_array(state, array_id);
+  struct array_base* clone = clone_array(array, 0);
+  list_prepend(&clone->lnode, &state->arrays);
+}
+
+void foo(um_state_t* state, platter cmd) {
+  state->regs[reg_a(cmd)] = state->regs[reg_b(cmd)] + state->regs[reg_c(cmd)];
+}
+
 
 void init_um_state(um_state_t* state, const char* filename) {
   *state = (um_state_t) {

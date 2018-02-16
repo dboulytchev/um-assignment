@@ -4,10 +4,18 @@
 
 #include "file_array.h"
 
+static array_base_t* file_array_clone(array_base_t* base, platter clone_id) {
+  (void) base;
+  (void) clone_id;
+  fprintf(stderr, "Clonning of file_array is not supported");
+  exit(63);
+}
+
 static struct array_base_vtable file_array_vtable = {
-  .get = file_array_get,
-  .set = file_array_set,
-  .destroy = destroy_file_array,
+  .get = (typeof(file_array_vtable.get)) file_array_get,
+  .set = (typeof(file_array_vtable.set)) file_array_set,
+  .destroy = (typeof(file_array_vtable.destroy)) destroy_file_array,
+  .clone = file_array_clone,
 };
 
 static void fseek_or_fail(file_array_t* self, platter position) {
@@ -30,8 +38,7 @@ file_array_t* create_file_array(const char* filename, platter id) {
   return res;
 }
 
-platter file_array_get(struct array_base* base, platter idx) {
-  file_array_t* self = (file_array_t*) base;
+platter file_array_get(file_array_t* self, platter idx) {
   fseek_or_fail(self, idx);
 
   platter ret;
@@ -43,8 +50,7 @@ platter file_array_get(struct array_base* base, platter idx) {
   return ret;
 }
 
-void file_array_set(struct array_base* base, platter idx, platter value) {
-  file_array_t* self = (file_array_t*) base;
+void file_array_set(file_array_t* self, platter idx, platter value) {
   fseek_or_fail(self, idx);
 
   if (fwrite(&value, sizeof(value), 1, self->filp) != sizeof(value)) {
@@ -53,10 +59,10 @@ void file_array_set(struct array_base* base, platter idx, platter value) {
   }
 }
 
-void destroy_file_array(struct array_base* base) {
-  file_array_t* self = (file_array_t*) base;
+void destroy_file_array(file_array_t* self) {
   if (fclose(self->filp)) {
     fprintf(stderr, "Error closing file");
     exit(15);
   }
+  destroy_array_base((array_base_t*) self);
 }

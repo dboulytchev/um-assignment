@@ -21,6 +21,10 @@ static inline void list_add_after(struct list_head* new, struct list_head* head)
   new->next->prev = new;
 }
 
+static inline void list_prepend(struct list_head* new, struct list_head* head) {
+  list_add_after(new, head);
+}
+
 static inline void list_append(struct list_head* new, struct list_head* head) {
   list_add_after(new, head->prev);
 }
@@ -28,6 +32,8 @@ static inline void list_append(struct list_head* new, struct list_head* head) {
 static inline void list_del(struct list_head* entry) {
   entry->next->prev = entry->prev;
   entry->prev->next = entry->next;
+  entry->next = NULL;
+  entry->prev = NULL;
 }
 
 #define list_entry(ptr, type, member) \

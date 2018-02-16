@@ -12,10 +12,12 @@ typedef struct ram_array {
 
 ram_array_t* create_ram_array(platter size, platter id);
 
-platter ram_array_get(struct array_base* base, platter idx);
+platter ram_array_get(ram_array_t* self, platter idx);
 
-void ram_array_set(struct array_base* base, platter idx, platter value);
+void ram_array_set(ram_array_t* self, platter idx, platter value);
 
-void destroy_ram_array(struct array_base* base);
+ram_array_t* ram_array_clone(ram_array_t* self, platter clone_id);
+
+void destroy_ram_array(ram_array_t* self);
 
 #endif // _RAM_ARRAY_H_

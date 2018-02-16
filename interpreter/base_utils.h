@@ -3,7 +3,7 @@
 #define _BASE_UTILS_H_
 
 #define offsetof(type, member) \
-  ((size_t)&((type*)0)->member)
+  ((size_t)&((type*)NULL)->member)
 
 #define container_of(ptr, type, member) \
   ((type*)((char*)(ptr) - offsetof(type, member)))

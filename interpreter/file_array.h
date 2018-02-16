@@ -13,10 +13,10 @@ typedef struct file_array {
 
 file_array_t* create_file_array(const char* file_path, platter id);
 
-platter file_array_get(struct array_base* base, platter idx);
+platter file_array_get(file_array_t* self, platter idx);
 
-void file_array_set(struct array_base* base, platter idx, platter value);
+void file_array_set(file_array_t* self, platter idx, platter value);
 
-void destroy_file_array(struct array_base* base);
+void destroy_file_array(file_array_t* self);
 
 #endif // _FILE_ARRAY_H_
