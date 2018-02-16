@@ -16,6 +16,15 @@ typedef struct um_state {
   uint64_t execution_finger;
 } um_state_t;
 
+void destroy_um_state(um_state_t* state) {
+  struct list_head* cur;
+  struct list_head* tmp;
+  list_for_each_safe(cur, tmp, &state->arrays) {
+    destroy_array(list_entry(cur, array_base_t, lnode));
+  }
+  fflush(stdout);
+}
+
 array_base_t* get_array(um_state_t* state, platter id) {
   struct list_head* cur;
   list_for_each(cur, &state->arrays) {
@@ -75,7 +84,7 @@ void not_and(um_state_t* state, platter cmd) {
 void halt(um_state_t* state, platter cmd) {
   (void)state;
   (void)cmd;
-  fprintf(stderr, "The machine is halted\n");
+  destroy_um_state(state);
   exit(0);
 }
 
@@ -109,7 +118,7 @@ void input(um_state_t* state, platter cmd) {
 }
 
 void load_program(um_state_t* state, platter cmd) {
-  platter array_id = state->regs[reg_c(cmd)];
+  platter array_id = state->regs[reg_b(cmd)];
   if (array_id == 0) {
     return;
   }

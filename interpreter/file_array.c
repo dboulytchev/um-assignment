@@ -33,7 +33,7 @@ file_array_t* create_file_array(const char* filename, platter id) {
       .id = id,
       .lnode = LIST_HEAD_INITIALIZER(res->base.lnode),
     },
-    .filp = fopen(filename, "rw"),
+    .filp = fopen(filename, "rwb"),
   };
   return res;
 }
@@ -41,13 +41,13 @@ file_array_t* create_file_array(const char* filename, platter id) {
 platter file_array_get(file_array_t* self, platter idx) {
   set_idx_or_fail(self, idx);
 
-  platter ret;
-  if (fread(&ret, sizeof(ret), 1, self->filp) != 1) {
+  unsigned char buf[sizeof(platter)];
+  if (fread(buf, sizeof(buf), 1, self->filp) != 1) {
     fprintf(stderr, "Error reading from file\n");
     exit(7);
   }
 
-  return ret;
+  return (buf[0] << 24) + (buf[1] << 16) + (buf[2] << 8) + buf[3];
 }
 
 void file_array_set(file_array_t* self, platter idx, platter value) {
