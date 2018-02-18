@@ -10,6 +10,7 @@ struct um_state;
 typedef void (*operator)(struct um_state* state, platter cmd);
 
 typedef struct um_state {
+  // List of all arrays, sorted by ids. Zero array is the first element of the list.
   struct list_head arrays;
   platter regs[8];
   operator operators[14];
@@ -89,8 +90,22 @@ void halt(um_state_t* state, platter cmd) {
 }
 
 void allocation(um_state_t* state, platter cmd) {
-  ram_array_t* array = create_ram_array(state->regs[reg_c(cmd)], state->regs[reg_b(cmd)]);
-  list_append(&array->base.lnode, &state->arrays);
+  platter next_id = 1;
+  struct list_head* cur;
+  // finding MEX(minimum excluded) of ids, using the facts that the list of arrays is sorted by ids
+  // in increasing order and that there is always present an array with id '0'.
+  list_for_each(cur, &state->arrays) {
+    array_base_t* next_array = list_entry(cur->next, array_base_t, lnode);
+    // if we reached the end of the list, next_array->id will be 0
+    if (next_array->id != next_id) {
+      ram_array_t* new = create_ram_array(state->regs[reg_c(cmd)], next_id);
+      list_add_after(&new->base.lnode, cur);
+      state->regs[reg_b(cmd)] = next_id;
+      return;
+    } else {
+      ++next_id;
+    }
+  }
 }
 
 void abandonment(um_state_t* state, platter cmd) {
