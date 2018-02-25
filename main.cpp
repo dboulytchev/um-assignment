@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <bitset>
 #include <netinet/in.h>
 #include <vector>
 #include <unordered_set>
@@ -10,11 +9,11 @@ using ui = uint32_t;
 union platter {
     struct {
         unsigned C:3, B:3, A:3, :23;
-    } std;
+    } standard;
 
     struct {
         unsigned value:25, A:3, :4;
-    } spc;
+    } special;
 
     struct {
         unsigned :28, val:4;
@@ -24,12 +23,12 @@ union platter {
     char bytes[4];
 };
 
-ui registers[8] = {0, 0, 0, 0, 0, 0, 0 ,0};
-
-std::vector<std::vector<platter>> arrays;
-std::unordered_set<ui> freedArrays;
-
 int main(int argc, char ** argv) {
+
+    ui registers[8] = {0, 0, 0, 0, 0, 0, 0 ,0};
+
+    std::vector<std::vector<platter>> arrays;
+    std::unordered_set<ui> freedArrays;
 
     std::ifstream is(argv[1], std::ios::in | std::ios::binary);
     std::vector<platter> zeroArray;
@@ -46,12 +45,12 @@ int main(int argc, char ** argv) {
     while (executionPoint < arrays[0].size()) {
         union platter p = arrays[0][executionPoint++];
 
-        ui A      = p.std.A;
-        ui B      = p.std.B;
-        ui C      = p.std.C;
         ui OP     = p.op.val;
-        ui SPCA   = p.spc.A;
-        ui SPCVAL = p.spc.value;
+        ui A      = p.standard.A;
+        ui B      = p.standard.B;
+        ui C      = p.standard.C;
+        ui SPCA   = p.special.A;
+        ui SPCVAL = p.special.value;
 
         switch (OP) {
             case 0:
