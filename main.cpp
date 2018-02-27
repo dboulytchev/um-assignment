@@ -178,8 +178,7 @@ void next_step() {
                 cerr << "  READ, ";
                 #endif
                 char input_char;
-                cin >> input_char;
-                cerr << input_char;
+                cin >> noskipws >> input_char;
                 registers[c] = (cin.eof() ? -1 : (uint32_t) input_char);
                 break;
             }
@@ -224,10 +223,12 @@ void next_step() {
 
 int main (int argc, char *argv[]) {
     assert(argc == 2 && "Only argument -- file to process");
+    #ifdef DEBUG
     if (is_little_endian()) {
         cerr << "current system is little-endian\n";
     }
     cerr << "loading " << argv[1] << "\n";
+    #endif
     vector<uint32_t> program;
     auto file = fopen(argv[1], "rb");
     for (uint32_t op; fread(&op, 4, 1, file); ) {
@@ -239,9 +240,13 @@ int main (int argc, char *argv[]) {
         program.push_back(op);
     }
     fclose(file);
+    #ifdef DEBUG
     cerr << "loaded\n";
+    #endif
     arrays.push_back(program);
+    #ifdef DEBUG
     cerr << "running\n";
+    #endif
     for (; execution_point < arrays[0].size(); ) {
         next_step();
     }
