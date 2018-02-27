@@ -122,7 +122,7 @@ public:
                     break;
                 case BC_IN:
                     uint8_t ch;
-                    _registers[c] = std::cin >> ch ? ch : 0xFFFFFFFF;
+                    _registers[c] = std::cin >> std::noskipws >> ch ? ch : 0xFFFFFFFF;
                     break;
                 case BC_LOAD:
                     _memory[0] = _memory[_registers[b]];
