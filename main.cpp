@@ -1,4 +1,3 @@
-#include <iostream>
 #include <fstream>
 #include <netinet/in.h>
 #include <vector>
@@ -51,7 +50,6 @@ int main(int argc, char ** argv) {
         ui C      = p.standard.C;
         ui SPCA   = p.special.A;
         ui SPCVAL = p.special.value;
-
         switch (OP) {
             case 0:
                 if (registers[C] != 0) {
@@ -100,17 +98,11 @@ int main(int argc, char ** argv) {
                 break;
             }
             case 10:
-                std::cout << (unsigned char) registers[C] << std::flush;
+                putchar(registers[C]);
                 break;
-            case 11: {
-                unsigned char c;
-                if (std::cin >> c) {
-                    registers[C] = c;
-                } else {
-                    registers[C] = 0xffffffff;
-                }
+            case 11:
+                registers[C] = static_cast<ui>(getchar());
                 break;
-            }
             case 12:
                 arrays[0] = arrays[registers[B]];
                 executionPoint = registers[C];
